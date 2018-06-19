@@ -18,6 +18,12 @@ func ls(dir string) {
 }
 
 func main() {
-	dir, _ := os.Getwd()
+	var dir string
+	if len(os.Args) > 1 {
+		dir = os.Args[1]
+	} else {
+		dir, _ = os.Getwd()
+	}
+
 	ls(dir)
 }
