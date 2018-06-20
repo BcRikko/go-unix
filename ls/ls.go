@@ -9,17 +9,17 @@ import (
 )
 
 var (
-	a bool
-	m bool
-	l bool
-	p bool
+	includeAllFile        bool
+	separateByCommas      bool
+	showListFormat        bool
+	writeSlashIfDirectory bool
 )
 
 func initFlag() {
-	flag.BoolVar(&a, "a", false, "Include directory entries whose names begin with a dot (.).")
-	flag.BoolVar(&m, "m", false, "Stream output format; list files across the page, separated by commas.")
-	flag.BoolVar(&l, "l", false, "List in long format.")
-	flag.BoolVar(&p, "p", false, "Write a slash (`/') after each filename if that file is a directory.")
+	flag.BoolVar(&includeAllFile, "a", false, "Include directory entries whose names begin with a dot (.).")
+	flag.BoolVar(&separateByCommas, "m", false, "Stream output format; list files across the page, separated by commas.")
+	flag.BoolVar(&showListFormat, "l", false, "List in long format.")
+	flag.BoolVar(&writeSlashIfDirectory, "p", false, "Write a slash (`/') after each filename if that file is a directory.")
 }
 
 func ls(dir string) {
@@ -30,16 +30,16 @@ func ls(dir string) {
 
 	list := []string{}
 	for _, fileInfo := range fileInfos {
-		if !a && strings.HasPrefix(fileInfo.Name(), ".") {
+		if !includeAllFile && strings.HasPrefix(fileInfo.Name(), ".") {
 			continue
 		}
 
 		filename := fileInfo.Name()
-		if p && fileInfo.IsDir() {
+		if writeSlashIfDirectory && fileInfo.IsDir() {
 			filename += "/"
 		}
 
-		if l && !m {
+		if showListFormat && !separateByCommas {
 			output := fmt.Sprintf(
 				"%v\t%10d\t%v\t%v",
 				fileInfo.Mode(),
@@ -53,7 +53,7 @@ func ls(dir string) {
 		}
 	}
 
-	if m {
+	if separateByCommas {
 		fmt.Println(strings.Join(list, ", "))
 	} else {
 		for _, file := range list {
