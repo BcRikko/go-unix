@@ -10,6 +10,7 @@ import (
 
 var (
 	m bool
+	p bool
 )
 
 func ls(dir string) {
@@ -20,7 +21,12 @@ func ls(dir string) {
 
 	list := []string{}
 	for _, fileInfo := range fileInfos {
-		list = append(list, fileInfo.Name())
+		file := fileInfo.Name()
+		if p && fileInfo.IsDir() {
+			file += "/"
+		}
+
+		list = append(list, file)
 	}
 
 	if m {
@@ -33,7 +39,8 @@ func ls(dir string) {
 }
 
 func initFlag() {
-	flag.BoolVar(&m, "m", false, "separated by commas")
+	flag.BoolVar(&m, "m", false, "Stream output format; list files across the page, separated by commas.")
+	flag.BoolVar(&p, "p", false, "Write a slash (`/') after each filename if that file is a directory.")
 }
 
 func getDir() string {
